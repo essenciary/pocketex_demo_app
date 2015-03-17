@@ -1,0 +1,10 @@
+<div class="btn-group" role="group">
+  <% class = "btn btn-xs" %>
+  <%= if @item["favorite"] == "0" do
+      link("Favorite", to: fav_pocket_item_path(Endpoint, :fav_item, @id), class: "#{class} btn-info")
+    else
+      link("Unfav", to: unfav_pocket_item_path(Endpoint, :unfav_item, @id), class: "#{class} btn-default")
+  end %>
+  <%= link("Archive", to: archive_pocket_item_path(Endpoint, :archive_item, @id), class: "#{class} btn-warning") %>
+  <%= link("Delete", to: delete_pocket_item_path(Endpoint, :delete_item, @id), class: "#{class} btn-danger") %>
+</div>

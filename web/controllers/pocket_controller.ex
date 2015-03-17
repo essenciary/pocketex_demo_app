@@ -14,37 +14,36 @@ defmodule WebUi.PocketController do
 
   def authorize(conn, _params) do
     {:ok, response} = Pocketex.Auth.get_request_token(@consumer_key, @redirect_uri)
-    request_token = response[:request_token]
-    conn = put_session(conn, :pocket_request_token, request_token)
-
-    redirect conn, external: Pocketex.Auth.autorization_uri(request_token, (WebUi.Router.Helpers.pocket_path(conn, :callback) |> WebUi.Endpoint.url))
+    conn
+    |> put_session(:pocket_request_token, response[:request_token])
+    |> redirect(external: Pocketex.Auth.autorization_uri(response[:request_token], (WebUi.Router.Helpers.pocket_path(conn, :callback) |> WebUi.Endpoint.url)))
   end
 
   def callback(conn, _params) do
-    {status, response} = Pocketex.Auth.authorize(@consumer_key, get_session(conn, :pocket_request_token))
-    if ( status == :ok ) do
-      conn = put_session(conn, :pocket_username, response["username"])
-      conn = put_session(conn, :pocket_access_token, response["access_token"])
-
-      conn
-      |> put_flash(:notice, "You have successfully logged into Pocket")
-      # |> render "index.html", pocket_username: response["username"]
-      |> redirect to: WebUi.Router.Helpers.pocket_path(conn, :index)
-    else
-      conn
-      |> put_flash(:error, "Authentication to Pocket failed")
-      |> redirect to: WebUi.Router.Helpers.pocket_path(conn, :index)
+    case Pocketex.Auth.authorize(@consumer_key, get_session(conn, :pocket_request_token)) do
+      {:ok, response} ->
+        conn
+        |> put_session(:pocket_username, response["username"])
+        |> put_session(:pocket_access_token, response["access_token"])
+        |> put_flash(:notice, "You have successfully logged into Pocket")
+        |> redirect to: WebUi.Router.Helpers.pocket_path(conn, :index)
+      true ->
+        conn
+        |> put_flash(:error, "Authentication to Pocket failed")
+        |> redirect to: WebUi.Router.Helpers.pocket_path(conn, :index)
     end
   end
 
   def items(conn, _params) do
-    {status, items} = Pocketex.Item.get(@consumer_key, get_session(conn, :pocket_access_token),
-                                    %{count: 10, detail_type: "simple", sort: "newest", state: "unread", content_type: "article"})
-    if ( status == :ok && !Enum.empty?(items["list"]) ) do
-      # json conn, items["list"]
-      render conn, "items.html", items: items["list"]
-    else
-      json conn, %{ko: "En error occured while trying to get the Pocket items"}
+    response = Pocketex.Item.get(@consumer_key, get_session(conn, :pocket_access_token),
+                                %{count: 10, detail_type: "complete", sort: "newest",
+                                state: "unread", content_type: "all"})
+
+    case response do
+      {:ok, items} ->
+        render conn, "items.html", items: items["list"]
+      {:ko, _} ->
+        json conn, %{ko: "En error occured while trying to get the Pocket items"}
     end
   end
 
@@ -52,15 +51,76 @@ defmodule WebUi.PocketController do
     render conn, "new.html"
   end
 
-  def create_item(conn, _params) do
-    #+TODO: add code to create item
+  def create_item(conn, params) do
+    case Pocketex.Item.create(@consumer_key, get_session(conn, :pocket_access_token), params["pocket_item"]) do
+      {:ok, _} ->
+        conn
+        |> put_flash(:notice, "Item was added to your pocket")
+        |> redirect to: WebUi.Router.Helpers.pocket_items_path(conn, :items)
+      {:ko, error} ->
+        conn
+        |> put_flash(:error, "Adding item failed")
+        |> render WebUi.Router.Helpers.new_pocket_item_path(conn, :index), pocket_item: params["pocket_item"], error: error
+    end
+  end
+
+  def fav_item(conn, params) do
+    case Pocketex.Item.fav(@consumer_key, get_session(conn, :pocket_access_token), params["id"]) do
+      {:ok, _} ->
+        conn
+        |> put_flash(:notice, "Item was favorited")
+        |> redirect to: WebUi.Router.Helpers.pocket_items_path(conn, :items)
+      {:ko, error} ->
+        conn
+        |> put_flash(:error, "Adding item to favorites failed")
+        |> render WebUi.Router.Helpers.pocket_items_path(conn, :items), error: error
+    end
+  end
+
+  def unfav_item(conn, params) do
+    case Pocketex.Item.unfav(@consumer_key, get_session(conn, :pocket_access_token), params["id"]) do
+      {:ok, _} ->
+        conn
+        |> put_flash(:notice, "Item was removed from favorites")
+        |> redirect to: WebUi.Router.Helpers.pocket_items_path(conn, :items)
+      {:ko, error} ->
+        conn
+        |> put_flash(:error, "Removing item from favorites failed")
+        |> render WebUi.Router.Helpers.pocket_items_path(conn, :items), error: error
+    end
+  end
+
+  def archive_item(conn, params) do
+    case Pocketex.Item.archive(@consumer_key, get_session(conn, :pocket_access_token), params["id"]) do
+      {:ok, _} ->
+        conn
+        |> put_flash(:notice, "Item was archived")
+        |> redirect to: WebUi.Router.Helpers.pocket_items_path(conn, :items)
+      {:ko, error} ->
+        conn
+        |> put_flash(:error, "Archiving item has failed")
+        |> render WebUi.Router.Helpers.pocket_items_path(conn, :items), error: error
+    end
+  end
+
+  def delete_item(conn, params) do
+    case Pocketex.Item.delete(@consumer_key, get_session(conn, :pocket_access_token), params["id"]) do
+      {:ok, _} ->
+        conn
+        |> put_flash(:notice, "Item was deleted")
+        |> redirect to: WebUi.Router.Helpers.pocket_items_path(conn, :items)
+      {:ko, error} ->
+        conn
+        |> put_flash(:error, "Deleting item has failed")
+        |> render WebUi.Router.Helpers.pocket_items_path(conn, :items), error: error
+    end
   end
 
   def logoff(conn, _params) do
     conn
     |> delete_session(:pocket_username)
     |> delete_session(:pocket_access_token)
-    |> redirect to: WebUi.Router.Helpers.page_path(conn, :index)
+    |> redirect to: WebUi.Router.Helpers.pocket_path(conn, :index)
   end
 
   def user_info(conn, _params) do

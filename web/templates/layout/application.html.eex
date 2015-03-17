@@ -12,6 +12,7 @@
       <div class="header">
         <ul class="nav nav-pills pull-right">
           <li><a href="/">Home</a></li>
+          <li><a href="<%= pocket_items_path(Endpoint, :items) %>">Items</a></li>
         </ul>
         <span class="logo"></span>
       </div>

@@ -1,13 +1,35 @@
-<h4>Your 10 newest unread articles</h4>
-<p><a href="<%= new_pocket_item_path(Endpoint, :new_item) %>" class="btn btn-default" role="button">Add article</a></p>
+<h4>
+  Your 10 newest unread articles
+  <a href="<%= new_pocket_item_path(Endpoint, :new_item) %>" class="btn btn-default" role="button" style="float: right; margin-top: -18px;">Add article</a>
+</h4>
 <ul class="list-group">
-  <%= for {_id, item} <- @items do %>
+  <%= for {id, item} <- @items do %>
   <li class="list-group-item">
-    <h5>
+    <!-- title -->
+    <h4>
       <%= item["resolved_title"] %>
-    </h5>
-    <%= item["excerpt"] %>
-    <%= link("View", to: item["resolved_url"], target: "_blank", class: "btn btn-default btn-xs") %>
+      <%= link("View", to: item["resolved_url"], target: "_blank", class: "btn btn-default btn-xs") %>
+    </h4>
+    <!-- toolbar -->
+    <p>
+      <!-- excerpt -->
+      <%= item["excerpt"] %>
+    </p>
+    <!-- info -->
+    <p>
+      <strong><%= article_host(item["resolved_url"]) %></strong>
+    </p>
+    <!-- tags -->
+    <%= unless is_nil(item["tags"]) do %>
+      <ul style="list-style-type: none; padding: 0; margin: 0;">
+        <%= for {tag, _tag_details} <- item["tags"] do %>
+          <li style="display: inline" class="label label-default"><%= tag %></li>
+        <% end %>
+      </ul>
+    <% end %>
+    <p>
+      <%= render "_item_toolbar.html", item: item, id: id %>
+    </p>
   </li>
   <% end %>
 </ul>
