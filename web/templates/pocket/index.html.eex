@@ -1,0 +1,22 @@
+<h3>Hello <%= @pocket_username %>!</h3>
+
+<div>
+  <%= if is_nil(@pocket_username) do %>
+  <a href="<%= pocket_path(Endpoint, :authorize) %>" class="btn btn-default btn-lg btn-block">
+    <span class="glyphicon pocket" aria-hidden="true">
+      <img src="images/pocket_logo.png" style="height: 24px; width: 24px" />
+    </span>
+    Login
+  </a>
+  <% else %>
+  <a href="<%= pocket_path(Endpoint, :logoff) %>" class="btn btn-primary btn-lg btn-block">
+    <span class="glyphicon pocket" aria-hidden="true">
+      <img src="images/pocket_logo.png" style="width: 24px" />
+    </span>
+    <%= @pocket_username %>, log off
+  </a>
+  <a href="<%= pocket_path(Endpoint, :items) %>" class="btn btn-default btn-lg btn-block">
+    Lastest unread 10 items in your Pocket
+  </a>
+  <% end %>
+</div>

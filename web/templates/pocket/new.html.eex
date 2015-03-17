@@ -1,0 +1,19 @@
+<h4>Add new Pocket article</h4>
+<%= form_for @conn, create_pocket_item_path(@conn, :create_item), [name: :pocket_item], fn f -> %>
+  <div class="form-group">
+    <label>Article URL</label>
+    <%= text_input f, :url, placeholder: "Link of the article", class: "form-control" %>
+  </div>
+  <div class="form-group">
+    <label>Title</label>
+    <%= text_input f, :title, placeholder: "Title for the article (optional)", class: "form-control" %>
+  </div>
+  <div class="form-group">
+    <label>Article URL</label>
+    <%= text_input f, :tags, placeholder: "Comma separated list of tags", class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= submit "Add article", class: "btn" %>
+  </div>
+<% end %>

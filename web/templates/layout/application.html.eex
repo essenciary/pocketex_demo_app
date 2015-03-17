@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Essenciary</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/phoenix.css">
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="header">
+        <ul class="nav nav-pills pull-right">
+          <li><a href="/">Home</a></li>
+        </ul>
+        <span class="logo"></span>
+      </div>
+
+      <%= if ( get_flash(@conn, :notice) ) do %>
+      <div class="flash_notice alert alert-success">
+        <%= get_flash(@conn, :notice) %>
+      </div>
+      <% end %>
+      <%= if ( get_flash(@conn, :alert) ) do %>
+      <div class="flash_error alert alert-danger">
+        <%= get_flash(@conn, :error) %>
+      </div>
+      <% end %>
+
+      <%= @inner %>
+
+      <div class="footer">
+        <p></p>
+      </div>
+
+    </div> <!-- /container -->
+  </body>
+</html>

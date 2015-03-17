@@ -1,0 +1,13 @@
+<h4>Your 10 newest unread articles</h4>
+<p><a href="<%= new_pocket_item_path(Endpoint, :new_item) %>" class="btn btn-default" role="button">Add article</a></p>
+<ul class="list-group">
+  <%= for {_id, item} <- @items do %>
+  <li class="list-group-item">
+    <h5>
+      <%= item["resolved_title"] %>
+    </h5>
+    <%= item["excerpt"] %>
+    <%= link("View", to: item["resolved_url"], target: "_blank", class: "btn btn-default btn-xs") %>
+  </li>
+  <% end %>
+</ul>
