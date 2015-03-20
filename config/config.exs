@@ -10,7 +10,7 @@ config :web_ui, WebUi.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "WohGYFMYvpEqR6083DfUgLejeu9/l/0ks9vqow56WWBBLstUubHtKvFs+HA83QTR",
   debug_errors: false,
-  pubsub: [name: WebUi.PubSub, 
+  pubsub: [name: WebUi.PubSub,
            adapter: Phoenix.PubSub.PG2]
 
 # Configures Elixir's Logger
@@ -23,7 +23,7 @@ config :phoenix, MyApp.Router,
             key: "fo4jfos9df0sfasliji4309fujdspa"]
 
 config :pocket,
-  consumer_key: "38718-fdebf1dcd854a69175d6072e"
+  consumer_key: "38718-fdebf1dcd854a69175d6072e" # DELETE_ME
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
