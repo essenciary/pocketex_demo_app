@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <title>Essenciary</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/css/phoenix.css">
+    <link rel="stylesheet" href="<%= static_path(@conn, "/css/app.css") %>">
   </head>
 
   <body>
@@ -35,5 +35,8 @@
       </div>
 
     </div> <!-- /container -->
+
+    <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
+    <script>require("web/static/js/app")</script>
   </body>
 </html>

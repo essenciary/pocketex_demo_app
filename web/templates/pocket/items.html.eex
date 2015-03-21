@@ -8,7 +8,7 @@
     <!-- title -->
     <h4>
       <%= item["resolved_title"] %>
-      <%= link("View", to: item["resolved_url"], target: "_blank", class: "btn btn-default btn-xs") %>
+      <%= link("View", to: item["resolved_url"] || item["given_url"], target: "_blank", class: "btn btn-default btn-xs") %>
     </h4>
     <!-- toolbar -->
     <p>
@@ -17,7 +17,7 @@
     </p>
     <!-- info -->
     <p>
-      <strong><%= article_host(item["resolved_url"]) %></strong>
+      <strong><%= article_host(item["resolved_url"] || item["given_url"]) %></strong>
     </p>
     <!-- tags -->
     <%= unless is_nil(item["tags"]) do %>

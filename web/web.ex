@@ -22,9 +22,16 @@ defmodule WebUi.Web do
       # Import all HTML functions (forms, tags, etc)
       use Phoenix.HTML
 
-      # *****
-      # Copy your old `web/view.ex` using block contents here
-      # *****
+      using do
+        quote do
+          # Import common functionality
+          import WebUi.Router.Helpers
+
+          # Use Phoenix.HTML to import all HTML functions (forms, tags, etc)
+          use Phoenix.HTML
+        end
+      end
+      
     end
   end
 

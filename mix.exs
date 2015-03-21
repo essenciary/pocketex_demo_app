@@ -23,6 +23,7 @@ defmodule WebUi.Mixfile do
   # Type `mix help deps` for examples and options
   defp deps do
     [{:phoenix, "~> 0.10.0"},
-     {:cowboy, "~> 1.0"}]
+     {:cowboy, "~> 1.0"},
+     {:pocketex, "~> 0.1.0"}]
   end
 end

@@ -23,7 +23,7 @@ config :phoenix, MyApp.Router,
             key: "fo4jfos9df0sfasliji4309fujdspa"]
 
 config :pocket,
-  consumer_key: "38718-fdebf1dcd854a69175d6072e" # DELETE_ME
+  consumer_key: "_your_pocket_consumer_key_"
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
